@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+    
+    --background: 228 15% 8%;
+    --foreground: 0 0% 95%;
+
+    --card: 228 15% 13%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 228 15% 13%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 220 90% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 228 15% 18%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 228 12% 22%;
+    --muted-foreground: 228 10% 55%;
+
+    --accent: 220 90% 56%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 228 12% 20%;
+    --input: 228 12% 20%;
+    --ring: 220 90% 56%;
+
+    --radius: 1.25rem;
+
+    --surface: 228 15% 11%;
+    --surface-elevated: 228 15% 15%;
+    --surface-hover: 228 15% 19%;
+    --glow: 220 90% 56%;
+    --online: 142 70% 49%;
+    --unread: 350 80% 60%;
+
+    --sidebar-background: 228 15% 11%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 220 90% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 228 15% 18%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 228 12% 20%;
+    --sidebar-ring: 220 90% 56%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  .glow-accent {
+    box-shadow: 0 0 20px hsl(220 90% 56% / 0.3), 0 0 60px hsl(220 90% 56% / 0.1);
+  }
+
+  .glow-accent-sm {
+    box-shadow: 0 0 10px hsl(220 90% 56% / 0.3);
+  }
+
+  .float-shadow {
+    box-shadow: 0 8px 32px hsl(228 15% 4% / 0.5), 0 2px 8px hsl(228 15% 4% / 0.3);
+  }
+
+  .float-shadow-sm {
+    box-shadow: 0 4px 16px hsl(228 15% 4% / 0.4);
+  }
+
+  .bubble-in {
+    animation: bubbleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes bubbleIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

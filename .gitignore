@@ -1,3 +1,20 @@
-/target
-.env
+# Dependencies
+frontend/node_modules/
+backend/target/
+
+# Environment
+backend/.env
+
+# Build outputs
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
 *.pdb
