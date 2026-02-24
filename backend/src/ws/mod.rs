@@ -83,4 +83,24 @@ impl WsState {
             let _ = tx.send(event);
         }
     }
+
+    /// Remove closed/dropped senders for a user (used on disconnect cleanup).
+    pub fn cleanup_closed_senders(&self, user_id: Uuid) {
+        if let Some(mut senders) = self.inner.user_connections.get_mut(&user_id) {
+            senders.retain(|s| !s.is_closed());
+            if senders.is_empty() {
+                drop(senders);
+                self.inner.user_connections.remove(&user_id);
+            }
+        }
+    }
+
+    /// Check if a user still has any active connections.
+    pub fn user_is_connected(&self, user_id: &Uuid) -> bool {
+        self.inner
+            .user_connections
+            .get(user_id)
+            .map(|s| !s.is_empty())
+            .unwrap_or(false)
+    }
 }

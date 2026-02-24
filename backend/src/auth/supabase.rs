@@ -31,6 +31,25 @@ struct SupabaseClaims {
     iss: String,       // "supabase"
 }
 
+/// Standalone JWT verification — used by both the HTTP middleware and WS identify.
+///
+/// Returns the user's UUID on success, or a descriptive error string on failure.
+pub fn verify_token(jwt_secret: &str, token: &str) -> Result<Uuid, String> {
+    let key = DecodingKey::from_secret(jwt_secret.as_bytes());
+    let mut validation = Validation::new(Algorithm::HS256);
+    validation.set_issuer(&["supabase"]);
+
+    let token_data = decode::<SupabaseClaims>(token, &key, &validation)
+        .map_err(|e| format!("Invalid token: {e}"))?;
+
+    if token_data.claims.role != "authenticated" {
+        return Err("User is not authenticated".into());
+    }
+
+    Uuid::parse_str(&token_data.claims.sub)
+        .map_err(|_| "Invalid user ID in token".into())
+}
+
 #[async_trait]
 impl FromRequestParts<AppState> for AuthUser {
     type Rejection = AppError;
@@ -47,20 +66,8 @@ impl FromRequestParts<AppState> for AuthUser {
             .strip_prefix("Bearer ")
             .ok_or_else(|| AppError::Unauthorized("Invalid Authorization format".into()))?;
 
-        // Decode and verify the Supabase JWT
-        let key = DecodingKey::from_secret(state.config.supabase_jwt_secret.as_bytes());
-        let mut validation = Validation::new(Algorithm::HS256);
-        validation.set_issuer(&["supabase"]);
-
-        let token_data = decode::<SupabaseClaims>(token, &key, &validation)
-            .map_err(|e| AppError::Unauthorized(format!("Invalid token: {e}")))?;
-
-        if token_data.claims.role != "authenticated" {
-            return Err(AppError::Unauthorized("User is not authenticated".into()));
-        }
-
-        let user_id = Uuid::parse_str(&token_data.claims.sub)
-            .map_err(|_| AppError::Unauthorized("Invalid user ID in token".into()))?;
+        let user_id = verify_token(&state.config.supabase_jwt_secret, token)
+            .map_err(AppError::Unauthorized)?;
 
         Ok(AuthUser { user_id })
     }
